@@ -1,17 +1,45 @@
 import streamlit as st
-from analyzer import analyze_pdf
+from analyzer import analyze_pdf, chat_bot
 
 
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
-if "report_analysis" not in st.session_state:
+if 'report_analysis' not in st.session_state:
     st.session_state.report_analysis = None
+if 'pdf' not in st.session_state:
+    st.session_state.pdf = None
+if 'raw_pdf' not in st.session_state:
+    st.session_state.raw_pdf = None
 
 
 def make_dash():
     st.session_state.submitted = True
     st.rerun()
 
+
+popular_languages = [
+    "English (English)",
+    "简体中文 (Simplified Chinese)",
+    "繁體中文 (Traditional Chinese)",
+    "हिन्दी (Hindi)",
+    "Español (Spanish)",
+    "Français (French)",
+    "العربية (Arabic)",
+    "বাংলা (Bengali)",
+    "Português (Portuguese)",
+    "Русский (Russian)",
+    "اردو (Urdu)",
+    "Bahasa Indonesia (Indonesian)",
+    "Deutsch (German)",
+    "日本語 (Japanese)",
+    "Kiswahili (Swahili)",
+    "Türkçe (Turkish)",
+    "한국어 (Korean)",
+    "Tiếng Việt (Vietnamese)",
+    "Italiano (Italian)",
+]
+
+max_retries = 3
 
 if not st.session_state.submitted:
     st.title('Welcome to MyHealth!')
@@ -20,15 +48,22 @@ if not st.session_state.submitted:
 
     st.space('small')
 
+    language = st.selectbox(
+        '🌎 Please select a language for your report', popular_languages)
+
     uploaded_file = st.file_uploader(
         'Upload file here!', type=['pdf'])
+
+    st.session_state.pdf = uploaded_file
 
     if st.button('Submit file'):
         if uploaded_file is None:
             st.write('Please Upload a Valid File')
         else:
             with st.spinner('Analyzing your medical file to generate insights', width='stretch'):
-                report_analysis = analyze_pdf(uploaded_file)
+                report_analysis, raw_pdf = analyze_pdf(
+                    uploaded_file, language)
+                st.session_state.raw_pdf = raw_pdf
                 st.session_state.report_analysis = report_analysis
                 make_dash()
 
@@ -50,19 +85,44 @@ else:
     age = report.age
     summary = report.summary
     insights = report.vital_insights
+    next_steps = report.next_steps
+    gender = report.gender
+
+    personal_details = st.container(border=True)
+    personal_details.write(f'**Name:** {name}')
+    personal_details.write(f'**Age:** {age}')
+    personal_details.write(f'**Gender:** {gender}')
 
     left, right = st.columns(2)
 
     with left:
-        personal_details = st.container(border=True)
-        personal_details.write(f'Name: {name}')
-        personal_details.write(f'Age: {age}')
+        action_plan = st.container(border=True)
+        action_plan.header('Action Plan')
+        counter = 0
+        for next_step in next_steps:
+            counter += 1
+            action_plan.write(f'{counter}. {next_step.step}')
 
     with right:
         insight_container = st.container(border=True)
+        insight_container.header('Main Points')
         for insight in insights:
             insight_container.write(f'➡️ {insight.insight}')
 
     summary_container = st.container(border=True)
-    summary_container.header('Summary')
+    summary_container.header('Summary of Visit')
     summary_container.write(summary)
+
+    ask_ai = st.container(border=True)
+    ask_ai.subheader('Got Questions? Ask AI for more specific analysis')
+    language = ask_ai.selectbox(
+        '🌎 Please select a language for your response', popular_languages)
+    prompt = ask_ai.chat_input(
+        'Ask AI any questions you have about your medical report')
+    if prompt:
+        with ask_ai.spinner('Please wait for a response'):
+            response = chat_bot(prompt, st.session_state.raw_pdf, language)
+        ask_ai.write(response)
+
+    st.subheader('Your uploaded report:')
+    st.pdf(st.session_state.pdf)
