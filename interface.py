@@ -15,10 +15,13 @@ def make_dash():
 
 if not st.session_state.submitted:
     st.title('Welcome to MyHealth!')
-    st.header('Please upload your medical report below:')
+    st.header('An AI analyzer to summarize your medical report')
+    st.subheader('Please upload your medical report below:')
+
+    st.space('small')
 
     uploaded_file = st.file_uploader(
-        'Upload medical report here!', type=['pdf'])
+        'Upload file here!', type=['pdf'])
 
     if st.button('Submit file'):
         if uploaded_file is None:
@@ -28,6 +31,16 @@ if not st.session_state.submitted:
                 report_analysis = analyze_pdf(uploaded_file)
                 st.session_state.report_analysis = report_analysis
                 make_dash()
+
+    about = st.container(border=True)
+    about.subheader('About MyHealth:')
+    about.write("""**The Problem:** During doctor visits, patient's may struggle to remember important details about
+    their health. Many after visit summaries and medical reports could also be long and confusing to read
+    resulting in confusion about the patient's after care plans """)
+    about.write("""**The Solution:** This project aims to make medical reports more understandable towards
+                non medical professionals. The possibilities could be endless with MyHealth to make physician handoffs
+                much more efficient to helping the patient themselves understand their own visit quicker rather than
+                reading a very long report.""")
 
 else:
     st.title('Your Summarized Analysis is Here!')
