@@ -36,7 +36,8 @@ class Report(BaseModel):
 
 def analyze_pdf(pdf, language, model):
     """
-    Analyzes a given medical report pdf by querying gemini to extract vital insights for user
+    Analyzes a given medical report pdf by querying gemini to extract vital insights for user. Will be used in the
+    report for the interface.
     pdf: a variable associated with the medical report pdf
     language: the user's desired language output
     analyzed_report: a pydantic object with analysis on the user's report
