@@ -34,7 +34,7 @@ class Report(BaseModel):
     next_steps: List[Plan]
 
 
-def analyze_pdf(pdf, language):
+def analyze_pdf(pdf, language, model):
     """
     Analyzes a given medical report pdf by querying gemini to extract vital insights for user
     pdf: a variable associated with the medical report pdf
@@ -53,7 +53,7 @@ def analyze_pdf(pdf, language):
     report = client.files.upload(file=temp_path)
 
     interaction = client.interactions.create(
-        model='gemini-3.5-flash',
+        model=f'{model}',
         input=[
             {'type': 'document', 'uri': report.uri, 'mime_type': report.mime_type},
             {'type': 'text', 'text': f'Analyze this pdf and extract the vital most important parts for the patient to know.'
@@ -71,7 +71,7 @@ def analyze_pdf(pdf, language):
     return analyzed_report, report
 
 
-def chat_bot(prompt, pdf, language):
+def chat_bot(prompt, pdf, language, model):
     """
     Given a prompt and the pdf, gemini will answer any question about the medical report
     prompt: the user's given prompt
@@ -82,12 +82,13 @@ def chat_bot(prompt, pdf, language):
     client = genai.Client()
 
     interaction = client.interactions.create(
-        model='gemini-3.5-flash',
+        model=f'{model}',
         input=[
             {'type': 'document', 'uri': pdf.uri, 'mime_type': pdf.mime_type},
             {'type': 'text', 'text': f"""Here\'s your prompt: {prompt} Remember to answer as if you are the doctor
-            and the user is a non medical professional patient. So your answers should be in terms easy for
-            non medically trained individuals to understand and all responses should be in {language}"""}
+            and the user is a non medical professional patient. However don't actually be a doctor. You are just
+            informing the patient. So your answers should be in terms easy for non medically trained individuals
+            to understand and all responses should be in {language}"""}
         ]
     )
 
