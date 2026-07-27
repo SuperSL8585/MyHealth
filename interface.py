@@ -39,6 +39,19 @@ popular_languages = [
     "Italiano (Italian)",
 ]
 
+models = {
+    "Gemini 3.6 Flash": "gemini-3.6-flash",
+    "Gemini 3.5 Flash": "gemini-3.5-flash",
+    "Gemini 2.5 Flash": "gemini-2.5-flash",
+    "Gemini 2.0 Flash": "gemini-2.0-flash",
+    "Gemini 3.1 Flash Lite": "gemini-3.1-flash-lite",
+    "Gemini 2.5 Flash Lite": "gemini-2.5-flash-lite",
+    "Gemini 2.0 Flash Lite": "gemini-2.0-flash-lite",
+    "Gemini 2.5 Pro": "gemini-2.5-pro",
+    "Gemini 1.5 Flash": "gemini-1.5-flash",
+    "Gemini 1.5 Pro": "gemini-1.5-pro"
+}
+
 max_retries = 3
 
 if not st.session_state.submitted:
@@ -48,8 +61,13 @@ if not st.session_state.submitted:
 
     st.space('small')
 
-    language = st.selectbox(
-        '🌎 Please select a language for your report', popular_languages)
+    left, right = st.columns(2)
+    with left:
+        language = st.selectbox(
+            '🌎 Select a language for your report', popular_languages)
+    with right:
+        model = st.selectbox(
+            '🤖 Select a model to generate your report', models.keys())
 
     uploaded_file = st.file_uploader(
         'Upload file here!', type=['pdf'])
@@ -62,7 +80,7 @@ if not st.session_state.submitted:
         else:
             with st.spinner('Analyzing your medical file to generate insights', width='stretch'):
                 report_analysis, raw_pdf = analyze_pdf(
-                    uploaded_file, language)
+                    uploaded_file, language, models[model])
                 st.session_state.raw_pdf = raw_pdf
                 st.session_state.report_analysis = report_analysis
                 make_dash()
@@ -117,11 +135,14 @@ else:
     ask_ai.subheader('Got Questions? Ask AI for more specific analysis')
     language = ask_ai.selectbox(
         '🌎 Please select a language for your response', popular_languages)
+    model = ask_ai.selectbox(
+        '🤖 Select a model to generate your response', models.keys())
     prompt = ask_ai.chat_input(
         'Ask AI any questions you have about your medical report')
     if prompt:
         with ask_ai.spinner('Please wait for a response'):
-            response = chat_bot(prompt, st.session_state.raw_pdf, language)
+            response = chat_bot(
+                prompt, st.session_state.raw_pdf, language, models[model])
         ask_ai.write(response)
 
     st.subheader('Your uploaded report:')
