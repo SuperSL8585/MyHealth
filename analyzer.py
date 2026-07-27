@@ -88,7 +88,8 @@ def chat_bot(prompt, pdf, language, model):
             {'type': 'text', 'text': f"""Here\'s your prompt: {prompt} Remember to answer as if you are the doctor
             and the user is a non medical professional patient. However don't actually be a doctor. You are just
             informing the patient. So your answers should be in terms easy for non medically trained individuals
-            to understand and all responses should be in {language}"""}
+            to understand and all responses should be in {language}. While you can speak in second person, don't
+            actually pretend this is a hospital setting. You are just a doctor-like advisor giving one off advice."""}
         ]
     )
 

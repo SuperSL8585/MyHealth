@@ -55,30 +55,33 @@ models = {
 max_retries = 3
 
 if not st.session_state.submitted:
-    st.title('Welcome to MyHealth!')
-    st.header('An AI analyzer to summarize your medical report')
-    st.subheader('Please upload your medical report below:')
+    st.title('Welcome to MyHealth!', anchor=False)
+    st.header('An AI analyzer to summarize your medical report',
+              anchor=False, divider='gray')
+    st.subheader('Please upload your medical report below:', anchor=False)
 
     st.space('small')
 
-    left, right = st.columns(2)
+    upload = st.container(border=True)
+
+    left, right = upload.columns(2)
     with left:
-        language = st.selectbox(
+        language = upload.selectbox(
             '🌎 Select a language for your report', popular_languages)
     with right:
-        model = st.selectbox(
+        model = upload.selectbox(
             '🤖 Select a model to generate your report', models.keys())
 
-    uploaded_file = st.file_uploader(
-        'Upload file here!', type=['pdf'])
+    uploaded_file = upload.file_uploader(
+        '**Upload file here!**', type=['pdf'])
 
     st.session_state.pdf = uploaded_file
 
     if st.button('Submit file'):
         if uploaded_file is None:
-            st.write('Please Upload a Valid File')
+            upload.write('**Please Upload a Valid File**')
         else:
-            with st.spinner('Analyzing your medical file to generate insights', width='stretch'):
+            with upload.spinner('Analyzing your medical file to generate insights', width='stretch'):
                 report_analysis, raw_pdf = analyze_pdf(
                     uploaded_file, language, models[model])
                 st.session_state.raw_pdf = raw_pdf
@@ -86,7 +89,7 @@ if not st.session_state.submitted:
                 make_dash()
 
     about = st.container(border=True)
-    about.subheader('About MyHealth:')
+    about.subheader('About MyHealth:', anchor=False, divider='gray')
     about.write("""**The Problem:** During doctor visits, patient's may struggle to remember important details about
     their health. Many after visit summaries and medical reports could also be long and confusing to read
     resulting in confusion about the patient's after care plans """)
@@ -96,7 +99,7 @@ if not st.session_state.submitted:
                 reading a very long report.""")
 
 else:
-    st.title('Your Summarized Analysis is Here!')
+    st.title('Your Summarized Analysis is Here!', anchor=False)
     report = st.session_state.report_analysis
 
     name = report.name
@@ -107,15 +110,17 @@ else:
     gender = report.gender
 
     personal_details = st.container(border=True)
-    personal_details.write(f'**Name:** {name}')
-    personal_details.write(f'**Age:** {age}')
-    personal_details.write(f'**Gender:** {gender}')
+    personal_details.subheader(
+        'Personal Details', anchor=False, divider='gray')
+    personal_details.write(
+        f'**Name:** {name}\n\n**Age:** {age}\n\n**Gender:** {gender}')
 
     left, right = st.columns(2)
 
     with left:
         action_plan = st.container(border=True)
-        action_plan.header('Action Plan')
+        action_plan.header('Action Plan', anchor=False,
+                           divider='gray', text_alignment='center')
         counter = 0
         for next_step in next_steps:
             counter += 1
@@ -123,16 +128,18 @@ else:
 
     with right:
         insight_container = st.container(border=True)
-        insight_container.header('Main Points')
+        insight_container.header(
+            'Main Points', anchor=False, divider='gray', text_alignment='center')
         for insight in insights:
             insight_container.write(f'➡️ {insight.insight}')
 
     summary_container = st.container(border=True)
-    summary_container.header('Summary of Visit')
+    summary_container.header('Summary of Visit', anchor=False, divider='gray')
     summary_container.write(summary)
 
     ask_ai = st.container(border=True)
-    ask_ai.subheader('Got Questions? Ask AI for more specific analysis')
+    ask_ai.subheader(
+        'Got Questions? Ask AI for more specific analysis', anchor=False, divider='gray')
     language = ask_ai.selectbox(
         '🌎 Please select a language for your response', popular_languages)
     model = ask_ai.selectbox(
@@ -145,5 +152,9 @@ else:
                 prompt, st.session_state.raw_pdf, language, models[model])
         ask_ai.write(response)
 
-    st.subheader('Your uploaded report:')
+    st.subheader('Your uploaded report:', anchor=False, divider='gray')
     st.pdf(st.session_state.pdf)
+
+    if st.button('Analyze a New Report'):
+        st.session_state.submitted = False
+        st.rerun()
