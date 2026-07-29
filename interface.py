@@ -1,6 +1,9 @@
 import streamlit as st
 from analyzer import analyze_pdf, chat_bot
 
+# ==========================================
+# Setup
+# ==========================================
 
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
@@ -54,16 +57,23 @@ models = {
 
 max_retries = 3
 
+# ==========================================
+# Interface
+# ==========================================
+
 if not st.session_state.submitted:
-    st.title('Welcome to MyHealth!', anchor=False)
+    # Home Screen
+    st.title('Welcome to MyHealth!', anchor=False, text_alignment='center')
     st.header('An AI analyzer to summarize your medical report',
-              anchor=False, divider='gray')
-    st.subheader('Please upload your medical report below:', anchor=False)
+              anchor=False, divider='gray', text_alignment='center')
+    st.subheader('Please upload your medical report below:',
+                 anchor=False, text_alignment='center')
 
     st.space('small')
 
     upload = st.container(border=True)
 
+    # File Upload and Settings Selection
     left, right = upload.columns(2)
     with left:
         language = upload.selectbox(
@@ -77,7 +87,8 @@ if not st.session_state.submitted:
 
     st.session_state.pdf = uploaded_file
 
-    if st.button('Submit file'):
+    # AI Processing
+    if st.button('Submit file', type='primary'):
         if uploaded_file is None:
             upload.write('**Please Upload a Valid File**')
         else:
@@ -88,18 +99,21 @@ if not st.session_state.submitted:
                 st.session_state.report_analysis = report_analysis
                 make_dash()
 
+    # About Section
     about = st.container(border=True)
     about.subheader('About MyHealth:', anchor=False, divider='gray')
     about.write("""**The Problem:** During doctor visits, patient's may struggle to remember important details about
     their health. Many after visit summaries and medical reports could also be long and confusing to read
-    resulting in confusion about the patient's after care plans """)
+    resulting in confusion about the patient's after care plans. """)
     about.write("""**The Solution:** This project aims to make medical reports more understandable towards
                 non medical professionals. The possibilities could be endless with MyHealth to make physician handoffs
                 much more efficient to helping the patient themselves understand their own visit quicker rather than
                 reading a very long report.""")
 
 else:
-    st.title('Your Summarized Analysis is Here!', anchor=False)
+    # Analysis page
+    st.title('Your Summarized Analysis is Here!',
+             anchor=False, text_alignment='center')
     report = st.session_state.report_analysis
 
     name = report.name
@@ -109,6 +123,7 @@ else:
     next_steps = report.next_steps
     gender = report.gender
 
+    # Personal Details
     personal_details = st.container(border=True)
     personal_details.subheader(
         'Personal Details', anchor=False, divider='gray')
@@ -118,6 +133,7 @@ else:
     left, right = st.columns(2)
 
     with left:
+        # Action Plan
         action_plan = st.container(border=True)
         action_plan.header('Action Plan', anchor=False,
                            divider='gray', text_alignment='center')
@@ -127,6 +143,7 @@ else:
             action_plan.write(f'{counter}. {next_step.step}')
 
     with right:
+        # Main Points
         insight_container = st.container(border=True)
         insight_container.header(
             'Main Points', anchor=False, divider='gray', text_alignment='center')
@@ -137,6 +154,7 @@ else:
     summary_container.header('Summary of Visit', anchor=False, divider='gray')
     summary_container.write(summary)
 
+    # Chatbot
     ask_ai = st.container(border=True)
     ask_ai.subheader(
         'Got Questions? Ask AI for more specific analysis', anchor=False, divider='gray')
@@ -152,9 +170,10 @@ else:
                 prompt, st.session_state.raw_pdf, language, models[model])
         ask_ai.write(response)
 
+    # PDF Report
     st.subheader('Your uploaded report:', anchor=False, divider='gray')
     st.pdf(st.session_state.pdf)
 
-    if st.button('Analyze a New Report'):
+    if st.button('Analyze a New Report', type='primary'):
         st.session_state.submitted = False
         st.rerun()
