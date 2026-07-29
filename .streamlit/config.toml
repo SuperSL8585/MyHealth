@@ -2,19 +2,14 @@
 # Soft cream-white for a comfortable, warm background
 backgroundColor = "#FBFBF9"
 
-# Soft muted gray-sage for sidebars, cards, and container boxes
 secondaryBackgroundColor = "#EFEFEA"
 
-# Deep slate/charcoal for crisp, high-contrast text readability
-textColor = # "#19212C"
+textColor = "#2a3b52"
 
-# Trust Navy for buttons, key actions, and active indicators
 primaryColor = "#1B365D"
 
-# Sans-serif font stack optimized for clean readability
-font = "sans serif"
+font = "sans-serif"
 
 
 [browser]
-# Hides default Streamlit telemetry for a cleaner, professional app feel
 gatherUsageStats = false

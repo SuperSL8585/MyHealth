@@ -1,7 +1,11 @@
+from dotenv import load_dotenv
 from google import genai
 from pydantic import BaseModel, Field
 from typing import List, Optional
 import tempfile
+
+load_dotenv()
+# Report Analysis Information from Pydantic
 
 
 class Insights(BaseModel):
