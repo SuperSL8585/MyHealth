@@ -102,13 +102,13 @@ if not st.session_state.submitted:
     # About Section
     about = st.container(border=True)
     about.subheader('About MyHealth:', anchor=False, divider='gray')
-    about.write("""**The Problem:** During doctor visits, patient's may struggle to remember important details about
-    their health. Many after visit summaries and medical reports could also be long and confusing to read
-    resulting in confusion about the patient's after care plans. """)
-    about.write("""**The Solution:** This project aims to make medical reports more understandable towards
-                non medical professionals. The possibilities could be endless with MyHealth to make physician handoffs
-                much more efficient to helping the patient themselves understand their own visit quicker rather than
-                reading a very long report.""")
+    about.write("""**The Problem:** During doctor visits, patients often struggle to recall key medical details
+                or ask clarifying questions. Post-visit summaries and medical reports are typically dense, jargon-heavy,
+                and confusing, leading to miscommunication, patient anxiety, and unclear aftercare instructions.
+                """)
+    about.write("""**The Solution:** MyHealth translates complex medical reports into plain, accessible language.
+                By simplifying clinical documentation, MyHealth helps patients quickly understand their diagnosis
+                and care plans while streamlining physician handoffs and patient communication.""")
 
 else:
     # Analysis page
