@@ -25,3 +25,10 @@ Users upload their medical documents directly through the app. Powered by the Ge
 
 ## Disclaimer
 MyHealth is an educational tool built to improve patient health literacy. It does not provide medical advice or diagnoses. Always verify AI-generated insights with a licensed medical professional.
+
+## 🤝 Contributing
+Contributions are always welcome!
+For major changes, please open an issue first to discuss what you would like to change.
+
+## Licensing
+MIT License — See LICENSE file for details.
