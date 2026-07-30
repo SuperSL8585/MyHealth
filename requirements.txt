@@ -1,4 +1,5 @@
 streamlit
+streamlit-pdf
 python-dotenv
 google-genai
 pydantic
